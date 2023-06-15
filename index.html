@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      .kabaddi-scoreboard {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-image: url("path_to_your_image.jpg");
+        background-size: cover;
+        background-position: center;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #000;
+      }
+
+      .heading {
+        text-align: center;
+        color: #ff9800;
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      .divider {
+        width: 100%;
+        height: 2px;
+        background-color: #000;
+        margin-bottom: 20px;
+      }
+
+      .timer {
+        font-size: 36px;
+        color: #9c27b0;
+        margin-bottom: 20px;
+      }
+
+      .controls {
+        display: flex;
+        margin-bottom: 20px;
+      }
+
+      .controls button {
+        font-size: 18px;
+        padding: 10px 20px;
+        margin: 0 10px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .controls button:hover {
+        background-color: #388e3c;
+      }
+
+      .controls button:active {
+        background-color: #1b5e20;
+      }
+
+      .team-score {
+        display: flex;
+        flex: 1;
+        width: 100%;
+      }
+
+      .team {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .team h2 {
+        color: #2196f3;
+        font-size: 48px;
+        margin-bottom: 10px;
+      }
+
+      .team .score {
+        font-size: 96px;
+        color: #4caf50;
+        margin-bottom: 10px;
+      }
+
+      .team button {
+        font-size: 36px;
+        padding: 10px 20px;
+        margin-top: 20px;
+        background-color: #f44336;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .team button span {
+        margin: 0 5px;
+      }
+
+      .team button:hover {
+        background-color: #d32f2f;
+      }
+
+      .team button:active {
+        background-color: #b71c1c;
+      }
+
+      .timer-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      .timer-container .timer {
+        font-size: 48px;
+        color: #ff5722;
+        margin: 0 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="kabaddi-scoreboard">
+      <h1 class="heading">Kabaddi Score Board</h1>
+      <div class="divider"></div>
+      <div class="timer">00:00:00</div>
+      <div class="controls">
+        <button id="startBtn">Start</button>
+        <button id="pauseBtn">Pause</button>
+        <button id="stopBtn">Stop</button>
+      </div>
+      <div class="team-score">
+        <div class="team">
+          <h2>Team A</h2>
+          <div class="score">0</div>
+          <button id="decrementTeamABtn"><span>-</span></button>
+          <button id="incrementTeamABtn"><span>+</span></button>
+        </div>
+        <div class="team">
+          <h2>Team B</h2>
+          <div class="score">0</div>
+          <button id="decrementTeamBBtn"><span>-</span></button>
+          <button id="incrementTeamBBtn"><span>+</span></button>
+        </div>
+      </div>
+      <div class="timer-container">
+        <h2>Additional Timer</h2>
+        <div class="timer">00:00:00</div>
+        <button id="startAdditionalTimerBtn">Start</button>
+      </div>
+    </div>
+
+    <script>
+      // Timer variables
+      let mainSeconds = 20 * 60;
+      let additionalSeconds = 30;
+
+      // Score variables
+      let teamAScore = 0;
+      let teamBScore = 0;
+
+      // Timer elements
+      const mainTimer = document.querySelector(".timer");
+      const additionalTimer = document.querySelector(".timer-container .timer");
+
+      // Team score elements
+      const teamAScoreElement = document.querySelector(
+        ".team-score .team:first-child .score"
+      );
+      const teamBScoreElement = document.querySelector(
+        ".team-score .team:last-child .score"
+      );
+
+      // Update team A score
+      function updateTeamAScore(value) {
+        teamAScore += value;
+        teamAScoreElement.textContent = teamAScore;
+      }
+
+      // Update team B score
+      function updateTeamBScore(value) {
+        teamBScore += value;
+        teamBScoreElement.textContent = teamBScore;
+      }
+
+      // Start the main timer
+      function startMainTimer() {
+        mainTimer.textContent = formatTime(mainSeconds);
+        mainSeconds--;
+        if (mainSeconds >= 0) {
+          setTimeout(startMainTimer, 1000);
+        }
+      }
+
+      // Start the additional timer
+      function startAdditionalTimer() {
+        additionalSeconds = 30; // Reset the additional timer to 30 seconds
+        additionalTimer.textContent = formatTime(additionalSeconds);
+        const interval = setInterval(() => {
+          additionalSeconds--;
+          additionalTimer.textContent = formatTime(additionalSeconds);
+          if (additionalSeconds <= 0) {
+            clearInterval(interval);
+          }
+        }, 1000);
+      }
+
+      // Initialize event listener for the "Start" button
+      document
+        .getElementById("startAdditionalTimerBtn")
+        .addEventListener("click", startAdditionalTimer);
+
+      // Format time values to have leading zeros
+      function formatTime(time) {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        return `${minutes.toString().padStart(2, "0")}:${seconds
+          .toString()
+          .padStart(2, "0")}`;
+      }
+
+      // Initialize event listeners
+      document
+        .getElementById("startBtn")
+        .addEventListener("click", startMainTimer);
+      document
+        .getElementById("startAdditionalTimerBtn")
+        .addEventListener("click", startAdditionalTimer);
+
+      // Event listeners for updating team scores
+      document
+        .getElementById("decrementTeamABtn")
+        .addEventListener("click", () => {
+          updateTeamAScore(-1);
+        });
+
+      document
+        .getElementById("incrementTeamABtn")
+        .addEventListener("click", () => {
+          updateTeamAScore(1);
+        });
+
+      document
+        .getElementById("decrementTeamBBtn")
+        .addEventListener("click", () => {
+          updateTeamBScore(-1);
+        });
+
+      document
+        .getElementById("incrementTeamBBtn")
+        .addEventListener("click", () => {
+          updateTeamBScore(1);
+        });
+    </script>
+  </body>
+</html>
